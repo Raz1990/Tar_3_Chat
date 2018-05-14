@@ -35,3 +35,19 @@ html, body {
     list-style: none;
     outline: none;
 }
+
+.group {
+    background-color: gold;
+}
+
+.user {
+    background-color: aqua;
+}
+
+.childElement.isHidden{
+    display: none;
+}
+
+.active {
+    background-color: ButtonHighlight;
+}
