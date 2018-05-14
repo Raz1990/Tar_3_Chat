@@ -17,6 +17,10 @@ function Content(element) {
                 {
                     "type": "user",
                     "name": "Udi"
+                },
+{
+                    "type": "user",
+                    "name": "Raz"
                 }
             ]
         },
