@@ -11,20 +11,12 @@ function Content(element) {
                         {
                             "type": "user",
                             "name": "Tommy"
-                        },
-                        {
-                            "type": "user",
-                            "name": "Arale"
                         }
                     ]
                 },
                 {
                     "type": "user",
                     "name": "Udi"
-                },
-{
-                    "type": "user",
-                    "name": "Raz"
                 }
             ]
         },
