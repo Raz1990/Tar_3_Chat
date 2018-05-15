@@ -6,13 +6,11 @@ function ChatTree(element) {
 
         clear();
 
-        //make key press event
+        //make key up event
         document.body.addEventListener('keyup', decideAction);
 
         innerLoad(items);
     }
-
-    let lastItemId;
 
     function innerLoad(items, childElement, parentLiClassName, repeatSpaces, idValue) {
         childElement = childElement || false;
@@ -46,7 +44,6 @@ function ChatTree(element) {
             if (item.items) {
                 innerLoad(item.items, true, itemNameForClass, repeatSpaces + 3, items.length + idValue);
             }
-            lastItemId = idValue;
             idValue++;
         }
     }
@@ -81,7 +78,8 @@ function ChatTree(element) {
     function dealWithDown(currentlyActive, liChildren, liParent) {
         ///FEATURE
         //Check if there is a li to active if none are active
-        const firstLi = document.getElementsByTagName('li')[0];
+        const allLis = document.getElementsByTagName('li');
+        const firstLi = allLis[0];
         if (!currentlyActive && firstLi){
             makeActive(firstLi);
         }
@@ -105,7 +103,9 @@ function ChatTree(element) {
 
         idNow = parseInt(currentlyActive.id);
 
-        if (idNow === lastItemId) {
+        const lastLi = allLis[allLis.length-1];
+
+        if (idNow === parseInt(lastLi.id)) {
             return;
         }
 
@@ -252,7 +252,7 @@ function ChatTree(element) {
     function clear() {
         element.innerHTML = '';
 
-        //clear key press event
+        //clear key up event
         document.body.removeEventListener('keyup',decideAction);
     }
 
