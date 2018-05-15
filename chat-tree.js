@@ -3,10 +3,11 @@ function ChatTree(element) {
     //items = array of JSON elements
     //type (user, group), name and items (if group, array of JSON elements)
     function load(items) {
-        //make key press
-        document.body.addEventListener('keydown', (event) => {
-            decideAction(event);
-        });
+
+        clear();
+
+        //make key press event
+        document.body.addEventListener('keyup', decideAction);
 
         innerLoad(items);
     }
@@ -52,12 +53,42 @@ function ChatTree(element) {
 
     function decideAction(event) {
         const currentlyActive = document.getElementsByClassName('active')[0];
-        //if nothing is active, simply go back
+        let liChildren, liParent;
+        if (currentlyActive) {
+            liChildren = getElementChildren(currentlyActive);
+            liParent = getElementParent(currentlyActive);
+        }
+
+        switch (event.key) {
+            case 'ArrowDown':
+                dealWithDown(currentlyActive,liChildren,liParent);
+                break;
+            case 'ArrowUp':
+                dealWithUp(currentlyActive);
+                break;
+            case 'ArrowRight':
+                dealWithRight(currentlyActive, liChildren);
+                break;
+            case 'ArrowLeft':
+                dealWithLeft(currentlyActive, liChildren, liParent);
+                break;
+        }
+    }
+
+    function dealWithDown(currentlyActive, liChildren, liParent) {
+        ///FEATURE
+        //Check if there is a li to active if none are active
+        const firstLi = document.getElementsByTagName('li')[0];
+        if (!currentlyActive && firstLi){
+            makeActive(firstLi);
+        }
+
+        //if nothing is active, and no li in sight, simply go back
         if (!currentlyActive) {
             return;
         }
 
-        let liChildren, liParent;
+        let eleToActive, idNow;
 
         //check if its a group
         if (currentlyActive.classList.contains('group')) {
@@ -69,112 +100,89 @@ function ChatTree(element) {
             liParent = getElementParent(currentlyActive);
         }
 
-        if (event.key === 'ArrowDown') {
-            let eleToActive, idNow;
+        idNow = parseInt(currentlyActive.id);
 
-            idNow = parseInt(currentlyActive.id);
-
-            if (idNow === lastItemId) {
-                return;
-            }
-
-            //if has children and
-            //those children are visible and can be moved to
-            if (liChildren && !areElementsHidden(liChildren)) {
-                eleToActive = liChildren[0];
-            }
-            else {
-                if (liParent) {
-                    let parentsChildren = getElementChildren(liParent);
-                    let lastChild = parentsChildren[parentsChildren.length - 1];
-                    //if i'm the last active child
-                    if (parseInt(lastChild.id) === idNow) {
-                        //take my parent's id
-                        idNow = parseInt(liParent.id);
-                    }
-                }
-                eleToActive = document.getElementById(idNow + 1);
-            }
-
-            makeActive(eleToActive);
+        if (idNow === lastItemId) {
+            return;
         }
 
-        else if (event.key === 'ArrowUp') {
-            let eleToActive, idNow;
-
-            idNow = parseInt(currentlyActive.id);
-
-            if (idNow === 1) {
-                return;
-            }
-
-            //if has a parent
+        //if has children and
+        //those children are visible and can be moved to
+        if (liChildren && !areElementsHidden(liChildren)) {
+            eleToActive = liChildren[0];
+        }
+        else {
             if (liParent) {
                 let parentsChildren = getElementChildren(liParent);
                 let lastChild = parentsChildren[parentsChildren.length - 1];
-                idNow = parseInt(liParent.id);
-                eleToActive = document.getElementById(idNow);
-            }
-            else {
-                let groupElements = document.getElementsByClassName("group");
-                let lastGroupChildren = getElementChildren(groupElements[groupElements.length - 1]);
-                if (areElementsHidden(lastGroupChildren)) {
-
+                //if i'm the last active child
+                if (parseInt(lastChild.id) === idNow) {
+                    //take my parent's id
+                    idNow = parseInt(liParent.id);
                 }
-                eleToActive = document.getElementById(idNow - 1);
             }
-
-            //if (liChildren && !areElementsHidden(liChildren)) {
-            //    eleToActive = liChildren[0];
-            //}
-            //else {
-            //    let idNow;
-            //    if (liParent) {
-            //        idNow = parseInt(liParent.id);
-            //    }
-            //    else {
-            //        idNow = parseInt(currentlyActive.id);
-            //    }
-            //    eleToActive = document.getElementById((idNow + 1));
-            //}
-
-            makeActive(eleToActive);
+            eleToActive = document.getElementById(idNow + 1);
         }
 
-        else if (event.key === 'ArrowRight') {
-            //if it has children
-            if (liChildren) {
-                //if any of my children are hidden, i will hide myself
-                if (areElementsHidden(liChildren)) {
-                    decideVisibilty(currentlyActive);
-                }
-                makeActive(liChildren[0]);
-            }
+        makeActive(eleToActive);
+    }
+
+    function dealWithUp(currentlyActive) {
+        let eleToActive, idNow, previousLi;
+
+        idNow = parseInt(currentlyActive.id);
+
+        if (idNow === 1) {
+            return;
         }
 
-        else if (event.key === 'ArrowLeft') {
+        previousLi = currentlyActive.previousSibling;
 
-            if (liChildren) {
-                if (!areElementsHidden(liChildren)) {
-                    decideVisibilty(currentlyActive);
-                }
-                else if (liParent) {
-                    if (areElementsHidden(getElementChildren(liParent))) {
-                        decideVisibilty(liParent);
-                    }
-                    makeActive(liParent);
-                }
+        do {
+            eleToActive = previousLi;
+            if (eleToActive.classList.contains('isHidden')) {
+                previousLi = previousLi.previousSibling;
+            }
+        }while (eleToActive.classList.contains('isHidden'));
+
+        makeActive(eleToActive);
+    }
+
+    function dealWithLeft(currentlyActive, liChildren, liParent) {
+
+        if (liChildren) {
+            if (!areElementsHidden(liChildren)) {
+                decideVisibilty(currentlyActive);
             }
             else if (liParent) {
                 if (areElementsHidden(getElementChildren(liParent))) {
                     decideVisibilty(liParent);
                 }
-                else {
-                    makeActive(liParent);
-                }
+                makeActive(liParent);
+            }
+        }
+        else if (liParent) {
+            if (areElementsHidden(getElementChildren(liParent))) {
+                decideVisibilty(liParent);
+            }
+            else {
+                makeActive(liParent);
             }
         }
     }
+
+    function dealWithRight(currentlyActive, liChildren) {
+        //if it has children
+        if (liChildren.length > 0) {
+            //if any of my children are hidden, i will hide myself
+            if (areElementsHidden(liChildren)) {
+                decideVisibilty(currentlyActive);
+            }
+            makeActive(liChildren[0]);
+        }
+    }
+
+    //helper functions
 
     function getElementParent(element) {
         //classList[3] = childOf_*** (parent group)
@@ -233,6 +241,9 @@ function ChatTree(element) {
 
     function clear() {
         element.innerHTML = '';
+
+        //clear key press event
+        document.body.removeEventListener('keyup',decideAction);
     }
 
     return {
