@@ -36,7 +36,7 @@ function ChatTree(element) {
             });
 
             li.addEventListener('dblclick', () => {
-                decideVisibilty(li);
+                decideVisibility(li);
             });
 
             if (childElement) {
@@ -155,18 +155,18 @@ function ChatTree(element) {
 
         if (liChildren) {
             if (!areElementsHidden(liChildren)) {
-                decideVisibilty(currentlyActive);
+                decideVisibility(currentlyActive);
             }
             else if (liParent) {
                 if (areElementsHidden(getElementChildren(liParent))) {
-                    decideVisibilty(liParent);
+                    decideVisibility(liParent);
                 }
                 makeActive(liParent);
             }
         }
         else if (liParent) {
             if (areElementsHidden(getElementChildren(liParent))) {
-                decideVisibilty(liParent);
+                decideVisibility(liParent);
             }
             else {
                 makeActive(liParent);
@@ -179,7 +179,7 @@ function ChatTree(element) {
         if (liChildren.length > 0) {
             //if any of my children are hidden, i will hide myself
             if (areElementsHidden(liChildren)) {
-                decideVisibilty(currentlyActive);
+                decideVisibility(currentlyActive);
             }
             //makeActive(liChildren[0]);
         }
@@ -188,7 +188,7 @@ function ChatTree(element) {
     function dealWithEnter(currentlyActive, liChildren) {
         //if it has children
         if (liChildren.length > 0) {
-            decideVisibilty(currentlyActive);
+            decideVisibility(currentlyActive);
         }
     }
 
@@ -232,19 +232,19 @@ function ChatTree(element) {
         return true;
     }
 
-    function decideVisibilty(element) {
-        eleChildren = getElementChildren(element);
-        eleParent = getElementParent(element);
+    //gets an element and expands / collapses all of its children (if have any)
+    function decideVisibility(element) {
+        let eleChildren = getElementChildren(element);
+
         if (!eleChildren) {
             return;
         }
 
         for (let child of eleChildren) {
             child.classList.toggle('isHidden');
-            child.classList.toggle('isShown');
             const innerChildHidden = areElementsHidden(getElementChildren(child));
             if (child.classList.contains('isHidden') && !innerChildHidden) {
-                decideVisibilty(child);
+                decideVisibility(child);
             }
         }
     }
