@@ -66,6 +66,9 @@ function ChatTree(element) {
             case 'ArrowUp':
                 dealWithUp(currentlyActive);
                 break;
+            case 'Enter':
+                dealWithEnter(currentlyActive, liChildren);
+                break;
             case 'ArrowRight':
                 dealWithRight(currentlyActive, liChildren);
                 break;
@@ -178,7 +181,14 @@ function ChatTree(element) {
             if (areElementsHidden(liChildren)) {
                 decideVisibilty(currentlyActive);
             }
-            makeActive(liChildren[0]);
+            //makeActive(liChildren[0]);
+        }
+    }
+
+    function dealWithEnter(currentlyActive, liChildren) {
+        //if it has children
+        if (liChildren.length > 0) {
+            decideVisibilty(currentlyActive);
         }
     }
 
